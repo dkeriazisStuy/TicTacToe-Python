@@ -34,11 +34,8 @@ def set_end_state(b):
     layout = b.layout
     for win in Wins:
         plays = set(layout[i] for i in win)
-        if plays == {'x'}:
-            b.endState = 'x'
-            return True
-        elif plays == {'o'}:  # X or O wins
-            b.endState = 'o'
+        if '_' not in plays and len(plays) == 1:
+            b.endState = plays.pop()
             return True
 
     if layout.count('_') == 0:  # No blanks, tie
@@ -51,6 +48,9 @@ def set_end_state(b):
 def CreateAllBoards(layout,parent):
     # recursive function to manufacture all BoardNode nodes and place them into the AllBoards dictionary
     b = BoardNode(layout)
+    if layout in AllBoards:
+        AllBoards[layout].parents.append(parent)
+        return AllBoards[layout]
     if parent is not None:
         b.parents.append(parent)
     AllBoards[layout] = b
